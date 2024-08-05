@@ -10,7 +10,7 @@ def generate_data():
     data = {}
     start_date = datetime.now()
     end_date = start_date + timedelta(days=10)
-    current_date = start_datego
+    current_date = start_date
     while current_date < end_date:
         hour = 0
         date_str = current_date.strftime('%Y-%m-%d')
