@@ -1,4 +1,4 @@
-# cybersecurity-hackathon-2024
+# cybersecurity-hackathon-2024-buglords
 
 **This repository was created to take part in competition: Cybersecurity Innovations Hackathon**
 **TEAM: BugLords**
