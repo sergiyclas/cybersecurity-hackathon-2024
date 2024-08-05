@@ -14,7 +14,6 @@ custom_rand = list(range(10))
 random.shuffle(wes_rand)
 random.shuffle(ses_rand)
 random.shuffle(custom_rand)
-print(wes_rand)
 
 
 def generate_data():
