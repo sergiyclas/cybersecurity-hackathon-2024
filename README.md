@@ -3,6 +3,8 @@
 **This repository was created to take part in competition: Cybersecurity Innovations Hackathon**
 **TEAM: BugLords**
 
+**Python version: 3.9**
+
 Create a new repository on the command line
 
 git init
