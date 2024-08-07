@@ -60,7 +60,7 @@ def generate_random_cim_model():
                     generators_connections = ET.SubElement(generator, 'Connections')
                     generators_connection = ET.SubElement(generators_connections, 'Connection', to=transformer_id)
 
-                for k in range(random.randint(1, 10)):
+                for g in range(random.randint(1, 10)):
                     consumer = ET.SubElement(transformer, 'Consumer', id=f'consumer_{i}_{j}_{k}_{g}')
                     name = ET.SubElement(consumer, 'Name')
                     name.text = f'Споживач {i}_{j}_{k}_{g}'
