@@ -24,7 +24,7 @@ def generate_data():
         current_date += timedelta(hours=1)
 
     number = current_date.strftime('%d_%H_%M_%S')
-    with open(f'data/predict_weather_{number}.json', 'w') as f:
+    with open(f'data/predict_weather.json', 'w') as f:
         json.dump(data, f, indent=4)
 
 

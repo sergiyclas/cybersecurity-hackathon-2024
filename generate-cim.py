@@ -97,6 +97,6 @@ def save_cim_model_to_xml(cim_model, output_file):
 
 if __name__ == '__main__':
     cim_model = generate_random_cim_model()
-    output_file = f'cim_model.xml'
+    output_file = f'data/cim_model.xml'
     save_cim_model_to_xml(cim_model, output_file)
     print(f'CIM model saved to {output_file}')

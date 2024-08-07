@@ -16,7 +16,7 @@ def generate_data():
         }
 
     number = start_date.strftime('%d_%H_%M_%S')
-    with open(f'data/tth_{number}.json', 'w') as f:
+    with open(f'data/tth.json', 'w') as f:
         json.dump(stations, f, indent=4)
 
 

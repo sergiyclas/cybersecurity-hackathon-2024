@@ -26,9 +26,9 @@ def generate_data():
         current_date += timedelta(hours=1)
     #
     number = start_date.strftime('%d_%H_%M_%S')
-    # with open(f'data/historical_{number}.json', 'w') as f:
-    #     json.dump(data, f, indent=4)
-    with open(f'data/current_{number}.json', 'w') as f:
+    with open(f'data/historical.json', 'w') as f:
+         json.dump(data, f, indent=4)
+    with open(f'data/current.json', 'w') as f:
         json.dump(data, f, indent=4)
 
 

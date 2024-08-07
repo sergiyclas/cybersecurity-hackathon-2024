@@ -1,4 +1,6 @@
-def parser_data(path: str):
+import json
+
+def parser_data(path: str, COUNT_HOURS, CURRENT_HOUR, CURRENT_DAY):
     with open(path, 'r') as file:
         data = json.load(file)
         needed_data = {}

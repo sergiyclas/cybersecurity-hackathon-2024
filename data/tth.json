@@ -1,29 +1,29 @@
 {
     "transformer_1": {
-        "limit": 50
+        "limit": 42
     },
     "transformer_2": {
-        "limit": 59
-    },
-    "transformer_3": {
-        "limit": 57
-    },
-    "transformer_4": {
-        "limit": 50
-    },
-    "transformer_5": {
-        "limit": 48
-    },
-    "transformer_6": {
-        "limit": 49
-    },
-    "transformer_7": {
-        "limit": 55
-    },
-    "transformer_8": {
         "limit": 46
     },
+    "transformer_3": {
+        "limit": 55
+    },
+    "transformer_4": {
+        "limit": 43
+    },
+    "transformer_5": {
+        "limit": 60
+    },
+    "transformer_6": {
+        "limit": 47
+    },
+    "transformer_7": {
+        "limit": 49
+    },
+    "transformer_8": {
+        "limit": 53
+    },
     "transformer_9": {
-        "limit": 56
+        "limit": 43
     }
 }
