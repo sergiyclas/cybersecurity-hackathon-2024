@@ -17,15 +17,17 @@ def generate_data():
         data[date_str] = dict()
         while hour <= 24:
             data[date_str][f'{hour}:00'] = {
-                "users": {f"user_{i}": round(random.uniform(1, 2), 2) for i in range(1, 11)},
-                "generations": {f"generation_{i}": round(random.uniform(3, 10), 2) for i in range(1, 6)}
+                "CONSUMERS": {f"consumer_{i}": round(random.uniform(0.5, 12), 2) for i in range(1, 52)},
+                "SES": {f"ses_{i}": round(random.uniform(24 - hour + 0.5 if hour > 12 - 0.5 else hour, 24 - hour - 0.5 if hour > 12 else hour + 0.5), 2) for i in range(1, 19)},
+                "WES": {f"wes_{i}": round(random.uniform(0, 8), 2) for i in range(1, 13)},
+
             }
             hour += 1
         current_date += timedelta(hours=1)
-
+    #
     number = start_date.strftime('%d_%H_%M_%S')
-    with open(f'data/historical_{number}.json', 'w') as f:
-        json.dump(data, f, indent=4)
+    # with open(f'data/historical_{number}.json', 'w') as f:
+    #     json.dump(data, f, indent=4)
     with open(f'data/current_{number}.json', 'w') as f:
         json.dump(data, f, indent=4)
 

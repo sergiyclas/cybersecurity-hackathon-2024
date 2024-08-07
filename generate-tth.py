@@ -10,9 +10,9 @@ def generate_data():
     stations = {}
     start_date = datetime.now()
 
-    for i in range(random.randint(10, 10)):
-        stations[f'station_{i}'] = {
-            'limit': random.randint(1, 10),
+    for i in range(1, 10):
+        stations[f'transformer_{i}'] = {
+            'limit': random.randint(40, 60),
         }
 
     number = start_date.strftime('%d_%H_%M_%S')
