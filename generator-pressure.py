@@ -13,7 +13,7 @@ def generate_data():
     current_date = start_date
     while current_date < end_date:
         hour = 0
-        date_str = current_date.strftime('%Y-%m-%d')
+        date_str = current_date.strftime('2023-%m-%d')
         data[date_str] = dict()
         while hour <= 24:
             data[date_str][f'{hour}:00'] = {
@@ -28,8 +28,6 @@ def generate_data():
     number = start_date.strftime('%d_%H_%M_%S')
     with open(f'data/historical.json', 'w') as f:
          json.dump(data, f, indent=4)
-    with open(f'data/current.json', 'w') as f:
-        json.dump(data, f, indent=4)
 
 
 if __name__ == '__main__':
