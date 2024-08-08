@@ -62,12 +62,31 @@ def line_offer(COUNT_HOURS):
                     ready_data[user][CURRENT_HOUR + adder] = needed_data_historical[CURRENT_HOUR + adder][gen_or_cons][
                                                                  user] * factor[user]
 
-    all_priority_queues = {i: [] for i in range(CURRENT_HOUR, CURRENT_HOUR + COUNT_HOURS)}
+    transformators_data = {i: {} for i in transformator_to_every.keys()}
     for adder in range(COUNT_HOURS):
         for transformator, every in transformator_to_every.items():
             for user in every:
-                heapq.heappush(all_priority_queues[CURRENT_HOUR + adder],
-                               (ready_data[user][CURRENT_HOUR + adder], trans_to_sub[transformator], transformator))
+                if transformators_data[transformator].get(CURRENT_HOUR + adder, None):
+                    if user[:3] == 'con':
+                        transformators_data[transformator][CURRENT_HOUR + adder] -= ready_data[user][
+                            CURRENT_HOUR + adder]
+                    else:
+                        transformators_data[transformator][CURRENT_HOUR + adder] += ready_data[user][
+                            CURRENT_HOUR + adder]
+                else:
+                    if user[:3] == 'con':
+                        transformators_data[transformator][CURRENT_HOUR + adder] = -1 * ready_data[user][
+                            CURRENT_HOUR + adder]
+                    else:
+                        transformators_data[transformator][CURRENT_HOUR + adder] = ready_data[user][
+                            CURRENT_HOUR + adder]
+
+    all_priority_queues = {i: [] for i in range(CURRENT_HOUR, CURRENT_HOUR + COUNT_HOURS)}
+    for adder in range(COUNT_HOURS):
+        for transformator, every in transformators_data.items():
+            heapq.heappush(all_priority_queues[CURRENT_HOUR + adder],
+                           (transformators_data[transformator][CURRENT_HOUR + adder], trans_to_sub[transformator],
+                            transformator))
 
     results = ''
     for i, j in all_priority_queues.items():

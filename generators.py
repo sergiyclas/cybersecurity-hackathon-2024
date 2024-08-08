@@ -4,6 +4,8 @@ import random
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 
+import numpy as np
+
 
 def generate_sun_air_pressure():
     os.makedirs('data/', exist_ok=True)
@@ -16,12 +18,23 @@ def generate_sun_air_pressure():
         hour = 0
         date_str = current_date.strftime('%Y-%m-%d')
         data[date_str] = dict()
+        mean = 12  # Година піку (середина дня)
+        std_dev = 3  # Стандартне відхилення
+        peak = 1
+        ses_output = peak * np.exp(-0.5 * ((np.array(hour) - mean) / std_dev) ** 2)
+
+        wind_speed = 5 + 3 * np.sin((np.array(hour) - 9) * np.pi / 12) ** 2
+        wes_output = np.where(wind_speed < 3, 0, np.where(wind_speed > 15, 5, (wind_speed - 3) * 0.5))
+        # print(ses_output)
         while hour <= 24:
             data[date_str][f'{hour}:00'] = {
-                "SES": {f"ses_{i}": round(random.uniform(24 - hour + 0.5 if hour > 12 - 0.5 else hour,
-                                                         24 - hour - 0.5 if hour > 12 else hour + 0.5), 2) for i in
+                "SES": {f"ses_{i}": round(random.uniform(0.01 if ses_output <= 1 else ses_output - 1,
+                                                         1 if ses_output <= 1 else ses_output + 1), 2) for i
+                        in
                         range(1, 19)},
-                "WES": {f"wes_{i}": round(random.uniform(0, 8), 2) for i in range(1, 13)}
+                "WES": {f"wes_{i}": round(random.uniform(0.01 if wes_output <= 1 else wes_output - 1,
+                                                         1 if wes_output <= 1 else wes_output + 1), 2) for i
+                        in range(1, 13)}
             }
             hour += 1
         current_date += timedelta(hours=1)
@@ -42,14 +55,13 @@ def generate_current():
     hour = int(start_date.strftime('%H'))
     data[date_str] = dict()
     data[date_str][f'{hour}:00'] = {
-        "CONSUMERS": {f"consumer_{i}": round(random.uniform(0.5, 12), 2) for i in range(1, 52)},
+        "CONSUMERS": {f"consumer_{i}": round(random.uniform(0.25, 1), 2) for i in range(1, 52)},
         "SES": {f"ses_{i}": round(
-            random.uniform(24 - hour + 0.5 if hour > 12 - 0.5 else hour, 24 - hour - 0.5 if hour > 12 else hour + 0.5),
+            random.uniform(0.01 if hour <= 12 else hour / 24 - 0.5, hour / 24 + 0.5 if hour <= 12 else hour / 24 + 0.5),
             2) for i in range(1, 19)},
-        "WES": {f"wes_{i}": round(random.uniform(0, 8), 2) for i in range(1, 13)},
-
+        "WES": {f"wes_{i}": round(random.uniform(0.25, 2.5), 2) for i in range(1, 13)},
     }
-    #
+
     number = start_date.strftime('%d_%H_%M_%S')
     with open(f'data/current.json', 'w') as f:
         json.dump(data, f, indent=4)
@@ -68,11 +80,12 @@ def generate_historical():
         data[date_str] = dict()
         while hour <= 24:
             data[date_str][f'{hour}:00'] = {
-                "CONSUMERS": {f"consumer_{i}": round(random.uniform(0.5, 12), 2) for i in range(1, 52)},
-                "SES": {f"ses_{i}": round(random.uniform(24 - hour + 0.5 if hour > 12 - 0.5 else hour,
-                                                         24 - hour - 0.5 if hour > 12 else hour + 0.5), 2) for i in
-                        range(1, 19)},
-                "WES": {f"wes_{i}": round(random.uniform(0, 8), 2) for i in range(1, 13)},
+                "CONSUMERS": {f"consumer_{i}": round(random.uniform(0.25, 1), 2) for i in range(1, 52)},
+                "SES": {f"ses_{i}": round(
+                    random.uniform(0.01 if hour <= 12 else hour / 24 - 0.5,
+                                   hour / 24 + 0.5 if hour <= 12 else hour / 24 + 0.5),
+                    2) for i in range(1, 19)},
+                "WES": {f"wes_{i}": round(random.uniform(0.25, 2.5), 2) for i in range(1, 13)},
 
             }
             hour += 1
@@ -91,7 +104,7 @@ def generate_tth():
 
     for i in range(1, 10):
         stations[f'transformer_{i}'] = {
-            'limit': random.randint(40, 60),
+            'limit': random.randint(10, 30),
         }
 
     number = start_date.strftime('%d_%H_%M_%S')
@@ -193,3 +206,7 @@ def generate_random_cim_model():
     tree.write(output_file, encoding='utf-8', xml_declaration=True)
 
     return root
+
+generate_tth()
+generate_historical()
+generate_sun_air_pressure()
