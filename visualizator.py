@@ -1,38 +1,42 @@
-def visualization(graph: Dict[str, int]):
-    nodes = set()
-    for key in graph.keys():
-        u, v = map(int, key.split('_'))
-        nodes.add(u)
-        nodes.add(v)
+import matplotlib.pyplot as plt
+import networkx as nx
+from typing import List, Dict
 
-    nodes = sorted(nodes)
-    node_index = {node: i for i, node in enumerate(nodes)}
+def visual(raw_trans_to_sub: Dict[str, str], transformator_to_every: Dict[str, List[str]], all_priority_queues: Dict[int, List], hour: int):
+    # Створення графу
+    G = nx.DiGraph()
 
-    n = len(nodes)
-    graph_mx = np.zeros((n, n))
+    # Додавання вузлів
+    for transformer, substation in raw_trans_to_sub.items():
+        G.add_edge(substation, transformer)
 
-    for key, weight in graph.items():
-        u, v = map(int, key.split('_'))
-        i, j = node_index[u], node_index[v]
-        graph_mx[i, j] = weight
-        graph_mx[j, i] = weight
+    for transformer, consumers in transformator_to_every.items():
+        for consumer in consumers:
+            G.add_edge(transformer, consumer)
 
-    adj_matrix = np.array(graph_mx)
-    G = nx.Graph()
-    n = adj_matrix.shape[0]
-    for i in range(n):
-        for j in range(i + 1, n):
-            if adj_matrix[i][j] != 0:
-                G.add_edge(i, j, weight=adj_matrix[i][j])
+    # Додавання ваги
+    for weight, substation, transformer in all_priority_queues[hour]:
+        G[substation[0]][transformer]['weight'] = weight
 
-    # Визначення позицій вершин для кращої візуалізації
-    pos = nx.spring_layout(G)
+    # Покращений розташунок вузлів із збільшеною відстанню між ними
+    pos = nx.spring_layout(G, seed=42, k=1.5, iterations=50)
 
-    # Візуалізація графа
-    nx.draw(G, pos, with_labels=True, node_size=700, node_color="skyblue", font_size=12, font_weight="bold")
+    # Візуалізація
+    plt.figure(figsize=(18, 12))
 
-    # Додавання підписів до ребер з вагами
-    labels = nx.get_edge_attributes(G, "weight")
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+    # Відображення вузлів
+    nx.draw_networkx_nodes(G, pos, node_size=700, node_color='lightblue', edgecolors='black')
 
+    # Відображення ребер
+    nx.draw_networkx_edges(G, pos, width=1, alpha=0.7, edge_color='grey', arrows=True, arrowsize=12)
+
+    # Відображення міток вузлів
+    nx.draw_networkx_labels(G, pos, font_size=10, font_weight='bold')
+
+    # Відображення значень ребер
+    edge_labels = {(s, t): f'{G[s][t]["weight"]:.2f}' for s, t in G.edges() if 'weight' in G[s][t]}
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red', font_size=10)
+
+    plt.title("Електромережа: Трансформатори, Підстанції та Споживачі", fontsize=15)
+    plt.axis('off')
     plt.show()

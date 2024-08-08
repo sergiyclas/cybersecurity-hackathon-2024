@@ -1,7 +1,107 @@
+import json
+import os
+import random
 import xml.etree.ElementTree as ET
+from datetime import datetime, timedelta
+
+
+def generate_sun_air_pressure():
+    os.makedirs('data/', exist_ok=True)
+
+    data = {}
+    start_date = datetime.now()
+    end_date = start_date + timedelta(days=10)
+    current_date = start_date
+    while current_date < end_date:
+        hour = 0
+        date_str = current_date.strftime('%Y-%m-%d')
+        data[date_str] = dict()
+        while hour <= 24:
+            data[date_str][f'{hour}:00'] = {
+                "SES": {f"ses_{i}": round(random.uniform(24 - hour + 0.5 if hour > 12 - 0.5 else hour,
+                                                         24 - hour - 0.5 if hour > 12 else hour + 0.5), 2) for i in
+                        range(1, 19)},
+                "WES": {f"wes_{i}": round(random.uniform(0, 8), 2) for i in range(1, 13)}
+            }
+            hour += 1
+        current_date += timedelta(hours=1)
+
+    number = current_date.strftime('%d_%H_%M_%S')
+    with open(f'data/predict_weather.json', 'w') as f:
+        json.dump(data, f, indent=4)
+
+
+def generate_current():
+    os.makedirs('data/', exist_ok=True)
+
+    data = {}
+    start_date = datetime.now()
+    end_date = start_date + timedelta(days=10)
+    current_date = start_date
+    date_str = current_date.strftime('%Y-%m-%d')
+    hour = int(start_date.strftime('%H'))
+    data[date_str] = dict()
+    data[date_str][f'{hour}:00'] = {
+        "CONSUMERS": {f"consumer_{i}": round(random.uniform(0.5, 12), 2) for i in range(1, 52)},
+        "SES": {f"ses_{i}": round(
+            random.uniform(24 - hour + 0.5 if hour > 12 - 0.5 else hour, 24 - hour - 0.5 if hour > 12 else hour + 0.5),
+            2) for i in range(1, 19)},
+        "WES": {f"wes_{i}": round(random.uniform(0, 8), 2) for i in range(1, 13)},
+
+    }
+    #
+    number = start_date.strftime('%d_%H_%M_%S')
+    with open(f'data/current.json', 'w') as f:
+        json.dump(data, f, indent=4)
+
+
+def generate_historical():
+    os.makedirs('data/', exist_ok=True)
+
+    data = {}
+    start_date = datetime.now()
+    end_date = start_date + timedelta(days=10)
+    current_date = start_date
+    while current_date < end_date:
+        hour = 0
+        date_str = current_date.strftime('2023-%m-%d')
+        data[date_str] = dict()
+        while hour <= 24:
+            data[date_str][f'{hour}:00'] = {
+                "CONSUMERS": {f"consumer_{i}": round(random.uniform(0.5, 12), 2) for i in range(1, 52)},
+                "SES": {f"ses_{i}": round(random.uniform(24 - hour + 0.5 if hour > 12 - 0.5 else hour,
+                                                         24 - hour - 0.5 if hour > 12 else hour + 0.5), 2) for i in
+                        range(1, 19)},
+                "WES": {f"wes_{i}": round(random.uniform(0, 8), 2) for i in range(1, 13)},
+
+            }
+            hour += 1
+        current_date += timedelta(hours=1)
+    #
+    number = start_date.strftime('%d_%H_%M_%S')
+    with open(f'data/historical.json', 'w') as f:
+        json.dump(data, f, indent=4)
+
+
+def generate_tth():
+    os.makedirs('data/', exist_ok=True)
+
+    stations = {}
+    start_date = datetime.now()
+
+    for i in range(1, 10):
+        stations[f'transformer_{i}'] = {
+            'limit': random.randint(40, 60),
+        }
+
+    number = start_date.strftime('%d_%H_%M_%S')
+    with open(f'data/tth.json', 'w') as f:
+        json.dump(stations, f, indent=4)
 
 
 def generate_random_cim_model():
+    os.makedirs('data/', exist_ok=True)
+
     root = ET.Element('Network')
     main_substation = ET.SubElement(root, 'Substation', id='substationMain')
     name = ET.SubElement(main_substation, 'Name')
@@ -87,16 +187,9 @@ def generate_random_cim_model():
                     name.text = f'Споживач {consumer_count}'
                     consumers_connections = ET.SubElement(consumer, 'Connections')
                     consumers_connection = ET.SubElement(consumers_connections, 'Connection', to=transformer_id)
-    return root
 
-
-def save_cim_model_to_xml(cim_model, output_file):
+    output_file = f'data/cim_model.xml'
     tree = ET.ElementTree(cim_model)
     tree.write(output_file, encoding='utf-8', xml_declaration=True)
 
-
-if __name__ == '__main__':
-    cim_model = generate_random_cim_model()
-    output_file = f'data/cim_model.xml'
-    save_cim_model_to_xml(cim_model, output_file)
-    print(f'CIM model saved to {output_file}')
+    return root
